@@ -1,29 +1,28 @@
 package ru.kata.spring.boot_security.demo.model;
 
-import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
-@Data
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
+    @Column(name = "name")
     private String name;
-    @Column
-    private int age;
-    @Column
+    @Column(name = "email")
     private String email;
-    @Column
+    @Column(name = "age")
+    private int age;
+    @Column(name = "password")
     private String password;
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -31,11 +30,10 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(Long id, String name, int age, String email, String password, Set<Role> roles) {
-        this.id = id;
+    public User(String name, String email, Byte age, String password, Set<Role> roles) {
         this.name = name;
-        this.age = age;
         this.email = email;
+        this.age = age;
         this.password = password;
         this.roles = roles;
     }
@@ -120,4 +118,16 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return age == user.age && Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, email, age, password, roles);
+    }
 }
