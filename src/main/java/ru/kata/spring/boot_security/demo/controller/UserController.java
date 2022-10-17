@@ -25,7 +25,7 @@ public class UserController {
     @GetMapping("/{id}")
     public String showUser(@PathVariable("id") Long id, Model model) {
         model.addAttribute("user", userService.showUser(id));
-        return "/users/user";
+        return "users/user";
     }
 
     @GetMapping("/user")

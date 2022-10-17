@@ -23,6 +23,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private RoleService roleService;
 
     @Autowired
+    public void setPasswordEncoder() {
+    }
+    @Autowired
     public UserServiceImpl(UserDao userDao, RoleService roleService) {
         this.userDao = userDao;
         this.roleService = roleService;
@@ -32,13 +35,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Transactional
     @Override
-    public void add(Long id, User user, String role) {
+    public void add(User user, String role) {
         Set<Role> roles;
         roles = userDao.showUserByName(user.getName()).getRoles();
-        if (!roles.contains(roleService.getRoleByName("ADMIN")) && role.equals("ADMIN")) {
-            roles.add(roleService.getRoleByName(role));
-        } else if (role.equals("")) {
+        if (role == null) {
             roles = userDao.showUserByName(user.getName()).getRoles();
+        } else if (!roles.contains(roleService.getRoleByName("ADMIN")) && role.equals("ADMIN")) {
+            roles.add(roleService.getRoleByName(role));
         } else if (roles.contains(roleService.getRoleByName("ADMIN")) && role.equals("USER")) {
             roles.clear();
             roles.add(roleService.getRoleByName("USER"));
@@ -52,7 +55,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        userDao.add(id, user);
+        System.out.println(user);
+        userDao.add(user);
     }
 
     @Transactional

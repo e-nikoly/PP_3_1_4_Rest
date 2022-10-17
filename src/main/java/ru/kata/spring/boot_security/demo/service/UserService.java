@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserService {
 
-    void add(Long id, User user, String role);
+    void add(User user, String role);
 
     void removeUserById(Long id);
 
