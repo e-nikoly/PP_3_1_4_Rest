@@ -18,26 +18,19 @@ import java.util.Set;
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/admin")
 public class AdminRestController {
-    public AdminRestController(RoleService roleService) {
-        this.roleService = roleService;
-    }
-    public UserService userService;
 
+    public final UserService userService;
     private final RoleService roleService;
 
-    @Autowired
     public AdminRestController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }
 
-
     @GetMapping
     public ResponseEntity<List<User>> showAllUsers() {
         return new ResponseEntity<>(userService.listUsers(), HttpStatus.OK);
     }
-
-
 
     @PostMapping("/create")
     public ResponseEntity<User> createUser(@RequestBody User user) {
@@ -45,7 +38,6 @@ public class AdminRestController {
         HttpHeaders responseHeaders = new HttpHeaders();
         return new ResponseEntity<>(user, responseHeaders, HttpStatus.CREATED);
     }
-
 
     @GetMapping(value = "form/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> showUserById(@PathVariable Long id) {
