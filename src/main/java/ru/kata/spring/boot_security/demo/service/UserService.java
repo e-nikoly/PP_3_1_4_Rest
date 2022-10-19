@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface UserService {
 
-    void add(User user, String role);
+    void add(User user);
 
     void removeUserById(Long id);
 
-    void saveUser(User user, String role);
+    void saveUser(User user);
 
     List<User> listUsers();
 

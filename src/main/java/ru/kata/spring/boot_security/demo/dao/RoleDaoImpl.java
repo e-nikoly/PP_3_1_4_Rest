@@ -42,4 +42,6 @@ public class RoleDaoImpl implements RoleDao{
                 .setParameter("name", input_role).getSingleResult();
 
     }
+
+
 }

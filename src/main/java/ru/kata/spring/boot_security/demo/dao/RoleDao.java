@@ -5,6 +5,7 @@ import ru.kata.spring.boot_security.demo.model.Role;
 import java.util.Collection;
 
 public interface RoleDao {
+
     void add(Role role);
 
     Collection<Role> getAll();
@@ -14,4 +15,5 @@ public interface RoleDao {
     Role getById(Long id);
 
     Role getRoleByName(String input_role);
+
 }

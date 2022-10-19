@@ -35,14 +35,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Transactional
     @Override
-    public void add(User user, String role) {
+    public void add(User user) {
         Set<Role> roles;
+        Set<Role> updateRoles = user.getRoles();
         roles = userDao.showUserByName(user.getName()).getRoles();
-        if (role == null) {
+        if (updateRoles.contains(null)) {
             roles = userDao.showUserByName(user.getName()).getRoles();
-        } else if (!roles.contains(roleService.getRoleByName("ADMIN")) && role.equals("ADMIN")) {
-            roles.add(roleService.getRoleByName(role));
-        } else if (roles.contains(roleService.getRoleByName("ADMIN")) && role.equals("USER")) {
+        } else if (updateRoles.stream().anyMatch(r -> r.getName().equals("ADMIN"))) {
+            roles.add(roleService.getRoleByName("ADMIN"));
+        } else if (updateRoles.stream().noneMatch(r -> r.getName().equals("ADMIN"))) {
             roles.clear();
             roles.add(roleService.getRoleByName("USER"));
         }
@@ -55,7 +56,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        System.out.println(user);
         userDao.add(user);
     }
 
@@ -67,11 +67,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
-    public void saveUser(User user, String role) {
+    public void saveUser(User user) {
+        Set<Role> newRoles = user.getRoles();
         Set<Role> roles = new HashSet<>();
-        roles.add(roleService.getRoleByName("USER"));
-        if (role != null && role.equals("ADMIN")) {
-            roles.add(roleService.getRoleByName(role));
+        if (newRoles.stream().anyMatch(r -> r.getName().equals("ADMIN"))) {
+            roles.add(roleService.getRoleByName("ADMIN"));
+            roles.add(roleService.getRoleByName("USER"));
+        } else {
+            roles.add(roleService.getRoleByName("USER"));
         }
         user.setRoles(roles);
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
